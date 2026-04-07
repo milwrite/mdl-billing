@@ -3,82 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Muhlbauer Dermatopathology — Claim Routing Flow POC</title>
+  <title>MDL Billing Workflow Memo</title>
   <style>
     :root {
-      --bg: #f6f5f2;
-      --surface: rgba(255,255,255,0.72);
-      --surface-strong: #fffefb;
-      --ink: #111827;
-      --muted: #667085;
-      --line: #e6dfd6;
-      --blue: #2563eb;
-      --purple: #7c3aed;
-      --orange: #ea580c;
-      --red: #dc2626;
-      --green: #16a34a;
-      --amber: #b45309;
-      --shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
-      --radius: 18px;
-      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+      --bg: #f5f4f0;
+      --paper: #fffefb;
+      --surface: rgba(255, 255, 255, 0.72);
+      --ink: #121826;
+      --muted: #616977;
+      --line: #e7e1d8;
+      --blue: #2257c7;
+      --blue-soft: #f3f7ff;
+      --green: #166534;
+      --green-soft: #f4fbf5;
+      --amber: #9a5a11;
+      --amber-soft: #fffaf0;
+      --red: #a12525;
+      --red-soft: #fff7f7;
+      --purple: #7047d1;
+      --shadow: 0 20px 48px rgba(15, 23, 42, 0.05);
+      --radius: 20px;
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top left, #fbfaf7 0%, var(--bg) 55%);
+      background:
+        radial-gradient(circle at top left, #fbfaf6 0%, transparent 35%),
+        radial-gradient(circle at bottom right, #f7f4ee 0%, transparent 38%),
+        var(--bg);
       color: var(--ink);
-      line-height: 1.55;
-      padding: 28px 16px 56px;
+      line-height: 1.58;
+      padding: 28px 16px 64px;
     }
 
-    .wrap { max-width: 1240px; margin: 0 auto; }
+    .page {
+      max-width: 1220px;
+      margin: 0 auto;
+    }
 
     .hero {
-      display: grid;
-      grid-template-columns: 1.3fr 0.9fr;
-      gap: 18px;
-      margin-bottom: 18px;
-    }
-
-    .panel {
-      background: var(--surface);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255,255,255,0.65);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 26px;
       box-shadow: var(--shadow);
-      border-radius: var(--radius);
-    }
-
-    .hero-main {
-      padding: 28px;
+      padding: 34px 34px 28px;
+      margin-bottom: 18px;
     }
 
     .eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      color: var(--blue);
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       font-weight: 700;
-      letter-spacing: 0.08em;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      letter-spacing: 0.1em;
+      color: var(--blue);
+      margin-bottom: 14px;
     }
 
     h1 {
-      font-size: clamp(2rem, 4vw, 3.15rem);
-      line-height: 0.96;
-      letter-spacing: -0.05em;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      max-width: 900px;
       margin-bottom: 14px;
-      max-width: 760px;
     }
 
-    .hero-main p {
+    .hero p {
       color: var(--muted);
-      max-width: 720px;
-      font-size: 1rem;
+      font-size: 1.02rem;
+      max-width: 820px;
     }
 
     .hero-meta {
@@ -88,60 +86,129 @@
       gap: 10px;
     }
 
-    .pill {
+    .meta-pill {
       padding: 8px 12px;
       border-radius: 999px;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.65);
+      background: rgba(255,255,255,0.75);
+      color: var(--muted);
       font-size: 0.82rem;
-      color: var(--muted);
     }
 
-    .hero-side {
-      padding: 22px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .hero-side h2 {
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-    }
-
-    .hero-side p, .hero-side li {
-      font-size: 0.92rem;
-      color: var(--muted);
-    }
-
-    .hero-side ul { margin-left: 18px; }
-    .hero-side li + li { margin-top: 6px; }
-
-    .toolbar {
+    .top-grid {
       display: grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 300px 1fr;
       gap: 18px;
       margin-bottom: 18px;
     }
 
-    .claims-panel, .detail-panel {
-      padding: 20px;
+    .side-nav,
+    .summary,
+    .research,
+    .flow-section,
+    .unknowns,
+    .notes {
+      background: var(--surface);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.65);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
     }
 
-    .claims-panel h2, .detail-panel h2, .flow-panel h2 {
+    .side-nav {
+      padding: 20px;
+      position: sticky;
+      top: 16px;
+      align-self: start;
+    }
+
+    .side-nav h2,
+    .summary h2,
+    .research h2,
+    .flow-section h2,
+    .unknowns h2,
+    .notes h2 {
       font-size: 1rem;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       letter-spacing: -0.02em;
     }
 
-    .claims-panel p, .detail-panel p {
+    .side-nav a {
+      display: block;
+      text-decoration: none;
       color: var(--muted);
-      font-size: 0.9rem;
+      padding: 8px 0;
+      font-size: 0.93rem;
+      transition: color 160ms var(--ease-out), transform 160ms var(--ease-out);
     }
 
-    .claim-list {
+    .side-nav a:hover { color: var(--ink); transform: translateX(2px); }
+
+    .summary {
+      padding: 24px;
+    }
+
+    .summary p { color: var(--muted); }
+    .summary p + p { margin-top: 10px; }
+
+    .highlight {
+      margin-top: 14px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: var(--blue-soft);
+      border: 1px solid #d8e5ff;
+    }
+
+    .highlight strong { display: block; margin-bottom: 4px; }
+
+    .research-grid,
+    .unknown-grid,
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.52);
+    }
+
+    .card h3 {
+      font-size: 0.92rem;
+      margin-bottom: 8px;
+    }
+
+    .card p,
+    .card li { color: var(--muted); font-size: 0.9rem; }
+    .card ul { margin-left: 18px; margin-top: 8px; }
+
+    .research,
+    .flow-section,
+    .unknowns,
+    .notes {
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+
+    .section-intro {
+      color: var(--muted);
+      max-width: 820px;
+      font-size: 0.95rem;
+    }
+
+    .flow-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
       margin-top: 16px;
+    }
+
+    .claims-list {
       display: grid;
       gap: 10px;
     }
@@ -150,22 +217,40 @@
       width: 100%;
       text-align: left;
       padding: 14px 14px;
-      border-radius: 14px;
+      border-radius: 16px;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.72);
-      transition: transform 160ms var(--ease), border-color 160ms var(--ease), box-shadow 160ms var(--ease), background 160ms var(--ease);
+      background: rgba(255,255,255,0.74);
       cursor: pointer;
+      transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out), border-color 160ms var(--ease-out), background 160ms var(--ease-out);
     }
 
     .claim-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,0.05); }
     .claim-btn:active { transform: scale(0.98); }
-    .claim-btn.active { border-color: #bfd5fb; background: #f7faff; }
+    .claim-btn.active { background: #f8fbff; border-color: #cfe0ff; }
 
-    .claim-title { font-size: 0.92rem; font-weight: 700; margin-bottom: 3px; }
-    .claim-sub { color: var(--muted); font-size: 0.82rem; }
+    .claim-btn .title { font-size: 0.92rem; font-weight: 700; margin-bottom: 3px; }
+    .claim-btn .sub { font-size: 0.82rem; color: var(--muted); }
+
+    .detail-panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .detail-box {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.58);
+    }
+
+    .detail-box h3 {
+      font-size: 0.98rem;
+      margin-bottom: 8px;
+    }
+
+    .detail-box p { color: var(--muted); }
 
     .detail-grid {
-      margin-top: 16px;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
@@ -173,32 +258,28 @@
 
     .kv {
       padding: 14px;
-      border: 1px solid var(--line);
       border-radius: 14px;
-      background: rgba(255,255,255,0.56);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.62);
     }
 
-    .kv .k { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 4px; }
-    .kv .v { font-size: 0.93rem; font-weight: 600; }
-
-    .flow-panel {
-      padding: 22px;
-      margin-bottom: 18px;
-    }
-
-    .flow-panel > p {
+    .kv .k {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
       color: var(--muted);
-      margin-bottom: 16px;
-      font-size: 0.92rem;
-      max-width: 800px;
+      font-weight: 700;
+      margin-bottom: 4px;
     }
 
-    .flow {
+    .kv .v { font-size: 0.92rem; font-weight: 600; }
+
+    .flow-rail {
       display: flex;
       align-items: flex-start;
       gap: 0;
       overflow-x: auto;
-      padding-bottom: 6px;
+      padding-bottom: 8px;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -209,32 +290,31 @@
     }
 
     .node {
-      min-width: 180px;
-      max-width: 180px;
+      width: 190px;
+      min-width: 190px;
       padding: 18px 16px;
       border-radius: 18px;
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.82);
-      transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), border-color 180ms var(--ease), opacity 180ms var(--ease);
-      opacity: 0.38;
-      position: relative;
-      transform: scale(0.98);
+      opacity: 0.35;
+      transform: scale(0.985);
+      transition: transform 180ms var(--ease-out), opacity 180ms var(--ease-out), box-shadow 180ms var(--ease-out), filter 180ms var(--ease-out);
       filter: blur(0px);
     }
 
     .node.active {
       opacity: 1;
       transform: scale(1);
-      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.06);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
     }
 
     .node.dimmed { opacity: 0.18; filter: blur(1px); }
 
     .node .step {
-      font-size: 0.72rem;
-      color: var(--muted);
+      font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
+      color: var(--muted);
       font-weight: 700;
       margin-bottom: 8px;
     }
@@ -242,32 +322,31 @@
     .node .title {
       font-size: 1rem;
       font-weight: 700;
-      line-height: 1.1;
+      line-height: 1.08;
       margin-bottom: 6px;
     }
 
     .node .desc {
-      font-size: 0.86rem;
+      font-size: 0.87rem;
       color: var(--muted);
     }
 
     .node.blue { border-left: 4px solid var(--blue); }
     .node.purple { border-left: 4px solid var(--purple); }
-    .node.orange { border-left: 4px solid var(--orange); }
+    .node.amber { border-left: 4px solid var(--amber); }
     .node.red { border-left: 4px solid var(--red); }
     .node.green { border-left: 4px solid var(--green); }
-    .node.amber { border-left: 4px solid var(--amber); }
 
     .connector {
-      width: 74px;
+      width: 76px;
       height: 2px;
-      background: linear-gradient(90deg, #d8d2c7 0%, #c5cddd 100%);
+      background: linear-gradient(90deg, #d9d0c3 0%, #c8d2e0 100%);
       position: relative;
       margin: 0 10px;
-      flex-shrink: 0;
       align-self: center;
-      opacity: 0.32;
-      transition: opacity 180ms var(--ease);
+      flex-shrink: 0;
+      opacity: 0.28;
+      transition: opacity 180ms var(--ease-out);
     }
 
     .connector.active { opacity: 1; }
@@ -279,73 +358,55 @@
       top: 50%;
       transform: translateY(-50%);
       font-size: 9px;
-      color: #9aa2b2;
+      color: #99a3b5;
     }
 
-    .branch-area {
-      margin-top: 18px;
+    .branch-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 14px;
+      margin-top: 16px;
     }
 
-    .branch-card {
+    .branch {
       padding: 18px;
-      border: 1px solid var(--line);
       border-radius: 16px;
-      background: rgba(255,255,255,0.68);
-      opacity: 0.32;
-      transition: opacity 180ms var(--ease), transform 180ms var(--ease), box-shadow 180ms var(--ease);
-      transform: scale(0.985);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.58);
     }
 
-    .branch-card.active {
-      opacity: 1;
-      transform: scale(1);
-      box-shadow: 0 12px 24px rgba(15,23,42,0.05);
-    }
-
-    .branch-card h3 {
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-    }
-
-    .branch-card p, .branch-card li {
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-
-    .branch-card ul { margin-left: 18px; margin-top: 8px; }
-
-    .notes {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-
-    .notes .panel { padding: 22px; }
-    .notes h2 { font-size: 1rem; margin-bottom: 10px; }
-    .notes p, .notes li { color: var(--muted); font-size: 0.92rem; }
-    .notes ul { margin-left: 20px; }
+    .branch h3 { font-size: 0.95rem; margin-bottom: 8px; }
+    .branch p, .branch li { color: var(--muted); font-size: 0.9rem; }
+    .branch ul { margin-left: 18px; margin-top: 8px; }
 
     .footer-link {
-      margin-top: 18px;
-      color: var(--muted);
+      margin-top: 16px;
       font-size: 0.9rem;
+      color: var(--muted);
     }
 
     .footer-link a { color: var(--blue); text-decoration: none; }
 
     @media (max-width: 980px) {
-      .hero, .toolbar, .notes, .branch-area { grid-template-columns: 1fr; }
-      .detail-grid { grid-template-columns: 1fr 1fr; }
+      .top-grid,
+      .flow-layout,
+      .research-grid,
+      .unknown-grid,
+      .notes-grid,
+      .branch-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .side-nav {
+        position: static;
+      }
     }
 
     @media (max-width: 700px) {
       body { padding: 20px 14px 48px; }
-      .hero-main, .hero-side, .claims-panel, .detail-panel, .flow-panel, .notes .panel { padding: 18px 16px; }
+      .hero, .summary, .research, .flow-section, .unknowns, .notes, .side-nav { padding: 18px 16px; }
       .detail-grid { grid-template-columns: 1fr; }
-      .flow { flex-direction: column; gap: 10px; overflow-x: visible; }
+      .flow-rail { flex-direction: column; gap: 10px; overflow-x: visible; }
       .node-wrap { flex-direction: column; align-items: flex-start; }
       .connector {
         width: 2px;
@@ -360,12 +421,12 @@
         bottom: -9px;
         transform: translateX(-50%);
       }
-      .node { max-width: none; width: 100%; min-width: unset; }
+      .node { width: 100%; min-width: unset; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      * { scroll-behavior: auto !important; }
-      .claim-btn, .node, .branch-card, .connector { transition: none !important; }
+      html { scroll-behavior: auto; }
+      .claim-btn, .node, .connector { transition: none !important; }
     }
 
     @supports (padding: env(safe-area-inset-bottom)) {
@@ -378,240 +439,378 @@
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="page">
     <section class="hero">
-      <div class="panel hero-main">
-        <div class="eyebrow">Interactive proof of concept</div>
-        <h1>Claim routing pathways for Muhlbauer Dermatopathology</h1>
-        <p>This site demonstrates how rejected, underpaid, or patient-responsibility claims can move through a clearer decision system. The examples below are synthetic claims, built from the interview transcript, the revenue-cycle memo, and general pathology / laboratory billing research.</p>
-        <div class="hero-meta">
-          <span class="pill">Synthetic claim scenarios</span>
-          <span class="pill">Flow-based triage model</span>
-          <span class="pill">Dermatopathology context</span>
-          <span class="pill">Research-informed, not production logic</span>
+      <div class="eyebrow">MDL Billing Workflow Memo</div>
+      <h1>Revenue-cycle assessment, research summary, and interactive routing proof of concept</h1>
+      <p>This site aggregates the business memo, the operational findings, and an interactive claim-routing prototype for Muhlbauer Dermatopathology. It uses synthetic claims to make the workflow legible and uses external pathology / laboratory revenue-cycle research to sharpen what should be standardized, measured, and eventually automated.</p>
+      <div class="hero-meta">
+        <span class="meta-pill">Founded 1984</span>
+        <span class="meta-pill">Rochester, NY</span>
+        <span class="meta-pill">50,000+ specimens annually</span>
+        <span class="meta-pill">Synthetic claims only</span>
+      </div>
+    </section>
+
+    <section class="top-grid">
+      <nav class="side-nav">
+        <h2>On this page</h2>
+        <a href="#summary">Executive summary</a>
+        <a href="#research">What the research says</a>
+        <a href="#flow">Interactive claim pathways</a>
+        <a href="#unknowns">Unknowns and unknown unknowns</a>
+        <a href="#notes">Sources and notes</a>
+      </nav>
+
+      <section class="summary" id="summary">
+        <h2>Executive summary</h2>
+        <p>Muhlbauer Dermatopathology appears to have a functioning but underformalized billing-routing operation. The core problem is not simply unpaid claims. It is the combination of heavy manual triage, high rejection volume, patient-responsibility balances that convert poorly, and decision logic that appears to live largely in one experienced supervisor’s head.</p>
+        <p>The transcript suggests a practical routing model already exists: rejected claims tend to move toward one of three main destinations — rebill another insurer, move to patient ledger, or flow toward collections after aging. That model is real. It is just not yet documented, standardized, or insulated from key-person risk.</p>
+        <div class="highlight">
+          <strong>Main conclusion</strong>
+          The lab does not need a huge automation platform first. It needs a clearer operating model first: standardized rejection categories, branch criteria, owners, thresholds, and escalation rules. Once those exist, lightweight tooling becomes viable.
+        </div>
+      </section>
+    </section>
+
+    <section class="research" id="research">
+      <h2>What the research says stronger labs do</h2>
+      <p class="section-intro">Vendor-facing pathology and lab RCM sources are not neutral academic literature, but they align on a consistent operational pattern: better-performing labs prevent avoidable denials earlier, categorize rejections more precisely, separate patient-responsibility balances from true denials, and route work by rule instead of by private memory.</p>
+      <div class="research-grid">
+        <div class="card">
+          <h3>Front-end prevention</h3>
+          <p>Labs with stronger first-pass performance verify eligibility, deductible exposure, and authorization requirements before submission. They treat front-end data quality as a denial-prevention strategy, not an intake nicety.</p>
+        </div>
+        <div class="card">
+          <h3>Formal denial taxonomy</h3>
+          <p>They do not treat all rejections as one pile. They separate wrong insurance, inactive coverage, documentation gaps, coding issues, authorization issues, deductible transfers, and true non-covered claims.</p>
+        </div>
+        <div class="card">
+          <h3>Rules-based routing</h3>
+          <p>More mature operations map denial reasons to standard next actions: appeal, refile, patient ledger, collections, or manager review. This makes work less dependent on institutional memory.</p>
+        </div>
+        <div class="card">
+          <h3>Exception governance</h3>
+          <p>High-dollar patient balances, low-yield payer classes, and hardship-style situations are better managed when they trigger explicit review rules instead of ad hoc negotiation.</p>
         </div>
       </div>
-      <div class="panel hero-side">
-        <div>
-          <h2>What this POC demonstrates</h2>
+    </section>
+
+    <section class="flow-section" id="flow">
+      <h2>Interactive claim-routing proof of concept</h2>
+      <p class="section-intro">Select a synthetic scenario to see how one claim might move through the core workflow. These examples are not production policy. They are demonstrations of how the routing logic could be made visible, documented, and eventually supported by software.</p>
+      <div class="flow-layout">
+        <div class="claims-list" id="claimList"></div>
+        <div class="detail-panel">
+          <div class="detail-box">
+            <h3 id="detailTitle">Claim details</h3>
+            <p id="detailIntro">Choose a scenario to inspect its routing path.</p>
+          </div>
+          <div class="detail-grid" id="detailGrid"></div>
+          <div class="flow-rail" id="flowRail"></div>
+          <div class="branch-grid" id="branchGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="unknowns" id="unknowns">
+      <h2>Unknowns and unknown unknowns</h2>
+      <p class="section-intro">The interview clarifies the broad routing branches, but it also surfaces a second layer of uncertainty. Some missing facts can be answered directly. Others are structural and will only emerge once the workflow is documented more rigorously.</p>
+      <div class="unknown-grid">
+        <div class="card">
+          <h3>Known unknowns</h3>
           <ul>
-            <li>Three core destinations: rebill, patient ledger, collections</li>
-            <li>How deductible, wrong insurance, inactive coverage, and low-pay scenarios branch differently</li>
-            <li>Where manager review and write-down logic may appear</li>
+            <li>What exact facts move a case to alternate insurance rather than patient ledger?</li>
+            <li>Which rejection types matter most by count and by dollars?</li>
+            <li>What exact aging thresholds govern statements, collections, and write-down review?</li>
+            <li>What data survives after resolution, and can it be analyzed historically?</li>
           </ul>
         </div>
-        <div>
-          <h2>Important note</h2>
-          <p>No real patient data appears here. Every claim is synthetic. This is a design and logic prototype, not a live billing system.</p>
+        <div class="card">
+          <h3>Unknown unknowns</h3>
+          <ul>
+            <li>Shadow policies staff follow but have never documented</li>
+            <li>Decision variance across staff handling similar cases differently</li>
+            <li>Invisible underpayment leakage outside the visible denial pile</li>
+            <li>Clinical-business spillover where payer economics shape workup behavior</li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <section class="toolbar">
-      <div class="panel claims-panel">
-        <h2>Choose a synthetic claim</h2>
-        <p>Select a scenario to see how it travels through the routing logic.</p>
-        <div class="claim-list" id="claimList"></div>
+    <section class="notes" id="notes">
+      <h2>Notes, framing, and sources</h2>
+      <div class="notes-grid">
+        <div class="card">
+          <h3>How to read this site</h3>
+          <p>This is an operating-model artifact. It combines narrative findings, research-informed guidance, and UI-driven workflow visualization so the billing problem becomes easier to inspect and discuss.</p>
+        </div>
+        <div class="card">
+          <h3>Source basis</h3>
+          <p>Built from the transcript shared in thread, the internal memo/report work, muhlbauerlab.com context, and external pathology / lab billing materials discussing denial routing, appeals, claim scrubbing, and patient responsibility.</p>
+        </div>
       </div>
-
-      <div class="panel detail-panel">
-        <h2 id="detailTitle">Claim details</h2>
-        <p id="detailIntro">Scenario summary appears here.</p>
-        <div class="detail-grid" id="detailGrid"></div>
-      </div>
-    </section>
-
-    <section class="panel flow-panel">
-      <h2>Primary routing flow</h2>
-      <p>The highlighted path shows the likely handling path for the selected claim. This visual model intentionally simplifies the real world so that the branching logic becomes legible.</p>
-      <div class="flow" id="flow"></div>
-      <div class="branch-area" id="branchArea"></div>
-    </section>
-
-    <section class="notes">
-      <div class="panel">
-        <h2>Research patterns reflected here</h2>
-        <ul>
-          <li>Front-end eligibility and insurance verification reduce downstream denial work.</li>
-          <li>Labs often separate true denials from patient-responsibility balances like deductible or co-insurance.</li>
-          <li>Mature RCM teams categorize denials and route them by rule, not just by staff memory.</li>
-          <li>High-dollar patient balances often need manager review, payment-plan options, or partial write-down logic.</li>
-        </ul>
-      </div>
-      <div class="panel">
-        <h2>What this still does not know</h2>
-        <ul>
-          <li>Exact internal thresholds for write-off, hardship, or settlement</li>
-          <li>Which denial categories are most common by dollars, not just by anecdotes</li>
-          <li>Exact payer-specific filing and appeal deadlines</li>
-          <li>The full rejection taxonomy actually used by staff today</li>
-        </ul>
-        <div class="footer-link">Related memo: <a href="https://milwrite.github.io/quimbot/muhlbauer-dermatopathology-revenue-cycle-memo.html">Muhlbauer Dermatopathology Revenue Cycle Memo</a></div>
-      </div>
+      <div class="footer-link">Related Quimbot memo: <a href="https://milwrite.github.io/quimbot/muhlbauer-dermatopathology-revenue-cycle-memo.html">Muhlbauer Dermatopathology Revenue Cycle Memo</a></div>
     </section>
   </div>
 
   <script>
-    const flowTemplate = [
-      { id: 'submitted', title: 'Claim submitted', desc: 'Initial submission to insurer or clearinghouse.', color: 'blue' },
-      { id: 'adjudication', title: 'Payer response', desc: 'Claim paid, rejected, or shifted to patient responsibility.', color: 'purple' },
-      { id: 'triage', title: 'Manual triage', desc: 'Staff determine next action using available evidence.', color: 'amber' },
-      { id: 'destination', title: 'Primary destination', desc: 'Rebill, patient ledger, manager review, or write-down path.', color: 'orange' },
-      { id: 'followup', title: 'Follow-up stage', desc: 'Statements, appeals, collections, or negotiated resolution.', color: 'green' }
+    const steps = [
+      { id: 'submitted', title: 'Claim submitted', desc: 'Initial billing to payer or clearinghouse.', color: 'blue' },
+      { id: 'response', title: 'Payer response', desc: 'Paid, rejected, or shifted to patient responsibility.', color: 'purple' },
+      { id: 'triage', title: 'Manual triage', desc: 'Staff determine the correct next action.', color: 'amber' },
+      { id: 'routing', title: 'Routing decision', desc: 'Rebill, patient ledger, exception review, or collections path.', color: 'red' },
+      { id: 'resolution', title: 'Follow-up', desc: 'Resubmit, statements, collections, settlement, or write-down.', color: 'green' }
     ];
 
     const claims = [
       {
         id: 'wrong-commercial',
         name: 'Wrong commercial insurance on file',
-        summary: 'Patient was billed to an outdated commercial plan. Claim rejects because coverage is inactive, but alternate insurance likely exists.',
+        type: 'Insurance reroute',
+        summary: 'The billed payer is inactive or outdated, but another insurance source likely exists.',
         fields: {
-          'Specimen type': 'Routine dermatopathology biopsy',
-          'Initial payer result': 'Rejected / inactive coverage',
-          'Likely issue': 'Old insurance on file',
-          'Best next step': 'Search alternate insurance, rebill',
-          'Risk': 'Missed timely filing if it sits',
-          'Pathway type': 'Insurance reroute'
+          'Initial result': 'Rejected / inactive coverage',
+          'Likely cause': 'Old insurance on file',
+          'Primary move': 'Search alternate insurance and rebill',
+          'Time risk': 'Timely filing pressure',
+          'Why it matters': 'Avoidable front-end error becoming back-end labor',
+          'Confidence': 'Moderate if alternate payer evidence exists'
         },
-        activeSteps: ['submitted', 'adjudication', 'triage', 'destination', 'followup'],
-        branch: {
-          title: 'Rebill another insurer',
-          body: 'This follows the transcript’s “wrong insurance” logic. The key question is whether staff can identify a valid alternate payer fast enough to stay inside filing windows.',
-          bullets: ['Check demographic and eligibility data', 'Infer Medicare if age strongly suggests it', 'Contact patient if evidence is weak', 'Resubmit to correct payer']
-        }
+        branchCards: [
+          {
+            title: 'Likely branch',
+            body: 'Rebill another insurer after verifying whether the patient has active alternate coverage.',
+            bullets: ['Check demographics and eligibility', 'Use age / payer clues carefully', 'Contact patient if evidence is weak']
+          },
+          {
+            title: 'Operational concern',
+            body: 'If this sits too long, recoverable revenue may be lost even though a correct payer exists.',
+            bullets: ['Needs fast routing', 'Needs evidence rule', 'Needs owner assignment']
+          },
+          {
+            title: 'Research tie-in',
+            body: 'Better-performing labs try to catch this at the eligibility stage rather than after denial.',
+            bullets: ['Front-end verification', 'Claim scrubbing', 'Payer-order checks']
+          }
+        ]
       },
       {
-        id: 'deductible-patient',
+        id: 'deductible',
         name: 'High-deductible patient responsibility',
-        summary: 'Insurance does not pay because the claim falls into the patient’s deductible. This is not a classic denial; it is a patient-responsibility transfer.',
+        type: 'Patient responsibility',
+        summary: 'Insurance does not pay because the charge applies to the patient’s deductible rather than because the claim is truly denied.',
         fields: {
-          'Specimen type': 'Biopsy with routine interpretation',
-          'Initial payer result': 'Applied to deductible',
-          'Likely issue': 'High-deductible plan',
-          'Best next step': 'Move to patient ledger',
-          'Risk': 'Low collection probability',
-          'Pathway type': 'Patient responsibility'
+          'Initial result': 'Applied to deductible',
+          'Likely cause': 'High-deductible plan design',
+          'Primary move': 'Patient ledger',
+          'Time risk': 'Low insurance appeal value, high AR aging risk',
+          'Why it matters': 'Often low-yield collections path',
+          'Confidence': 'High if EOB clearly shows deductible shift'
         },
-        activeSteps: ['submitted', 'adjudication', 'triage', 'destination', 'followup'],
-        branch: {
-          title: 'Patient ledger, then collections',
-          body: 'The transcript suggests these balances often age through statements and later go to collections, where recovery remains limited.',
-          bullets: ['Post to patient ledger', 'Statement cycle for 2–3 months', 'Collections if no payment', 'Possible low yield even after handoff']
-        }
+        branchCards: [
+          {
+            title: 'Likely branch',
+            body: 'Move to patient ledger, statement cycle, then collections if unpaid.',
+            bullets: ['Not a classic denial', 'Track separately from insurer errors', 'Expect low recovery in many cases']
+          },
+          {
+            title: 'Operational concern',
+            body: 'Patient-responsibility balances can overwhelm staff if mixed into the same queue as correctable denials.',
+            bullets: ['Separate workflows', 'Different messaging', 'Different success assumptions']
+          },
+          {
+            title: 'Research tie-in',
+            body: 'Lab RCM guidance stresses separating deductible exposure from denial management.',
+            bullets: ['Patient estimate visibility', 'Better upfront explanation', 'Distinct AR reporting']
+          }
+        ]
       },
       {
-        id: 'no-insurance-found',
-        name: 'Rejected claim, no valid insurance found',
-        summary: 'Staff cannot identify any valid current insurance after review. Insurance options are exhausted, so the claim falls back to patient billing.',
+        id: 'no-insurance',
+        name: 'No valid insurance found',
+        type: 'Fallback mechanism',
+        summary: 'After review, staff cannot identify a valid active payer. Insurance options appear exhausted.',
         fields: {
-          'Specimen type': 'Single biopsy encounter',
-          'Initial payer result': 'Rejected',
-          'Likely issue': 'No valid active insurance',
-          'Best next step': 'Patient ledger fallback',
-          'Risk': 'May never convert to cash',
-          'Pathway type': 'Fallback mechanism'
+          'Initial result': 'Rejected',
+          'Likely cause': 'No valid current insurance',
+          'Primary move': 'Fallback to patient ledger',
+          'Time risk': 'Slow drift into uncollectible patient AR',
+          'Why it matters': 'Insurance search cost may exceed expected recovery',
+          'Confidence': 'Depends on whether payer search is truly exhausted'
         },
-        activeSteps: ['submitted', 'adjudication', 'triage', 'destination', 'followup'],
-        branch: {
-          title: 'Fallback to patient billing',
-          body: 'This is the explicit fallback path described in the conversation when the lab cannot make insurance work.',
-          bullets: ['Insurance search exhausted', 'Bill patient directly', 'Age on ledger', 'Collections later if unpaid']
-        }
+        branchCards: [
+          {
+            title: 'Likely branch',
+            body: 'Move to patient ledger once insurance search is genuinely exhausted.',
+            bullets: ['Confirm no viable payer remains', 'Document search attempt', 'Age through statements']
+          },
+          {
+            title: 'Operational concern',
+            body: 'Without a documented “search exhausted” rule, cases may bounce between queues too long.',
+            bullets: ['Need stop rule', 'Need evidence checklist', 'Need escalation point']
+          },
+          {
+            title: 'Research tie-in',
+            body: 'Stronger operations define exit criteria for each queue so staff do not rework the same cases indefinitely.',
+            bullets: ['Decision thresholds', 'Owner handoff', 'Aging discipline']
+          }
+        ]
       },
       {
-        id: 'large-ihc-balance',
-        name: 'Large patient balance after multiple immunostains',
-        summary: 'A hard case creates a large patient bill after deductible logic. The amount is high enough that a complaint or hardship review is likely.',
+        id: 'large-balance',
+        name: 'Large IHC-driven patient balance',
+        type: 'Exception handling',
+        summary: 'A complex case generates a large patient bill after partial insurance payment and deductible spillover.',
         fields: {
-          'Specimen type': 'Complex case with multiple IHC stains',
-          'Initial payer result': 'Partial pay + deductible spillover',
-          'Likely issue': 'Patient shocked by balance',
-          'Best next step': 'Manager review / negotiated reduction',
-          'Risk': 'Complaint to referring physician',
-          'Pathway type': 'Exception handling'
+          'Initial result': 'Partial pay + patient spillover',
+          'Likely cause': 'High bill after multiple stains',
+          'Primary move': 'Manager review / negotiated reduction',
+          'Time risk': 'Complaint escalation via referring physician',
+          'Why it matters': 'Current handling appears ad hoc',
+          'Confidence': 'Case-specific'
         },
-        activeSteps: ['submitted', 'adjudication', 'triage', 'destination', 'followup'],
-        branch: {
-          title: 'Manager review and possible settlement',
-          body: 'The transcript describes exactly this kind of scenario: a large stain-driven balance gets reconsidered, sometimes cut down, to salvage partial payment.',
-          bullets: ['Review case complexity and bill size', 'Assess whether to reduce charge', 'Offer partial settlement or payment plan', 'Write off remainder if justified']
-        }
+        branchCards: [
+          {
+            title: 'Likely branch',
+            body: 'Escalate for exception review, possible reduction, payment plan, or partial settlement.',
+            bullets: ['Review bill size', 'Assess hardship / optics', 'Decide on partial recovery strategy']
+          },
+          {
+            title: 'Operational concern',
+            body: 'This is where lack of formal settlement policy becomes expensive and inconsistent.',
+            bullets: ['Manager time', 'Relationship risk', 'Revenue tradeoff']
+          },
+          {
+            title: 'Research tie-in',
+            body: 'Mature RCM teams isolate exception queues so unusual balances do not clog standard denial work.',
+            bullets: ['Exception lane', 'Approval rules', 'Documented adjustments']
+          }
+        ]
       },
       {
         id: 'medicare-likely',
-        name: 'Commercial rejection, Medicare likely by age',
-        summary: 'Claim rejects under commercial insurance, but demographic clues suggest the patient may actually be Medicare primary.',
+        name: 'Commercial rejection, Medicare likely',
+        type: 'Inference-based reroute',
+        summary: 'Commercial billing fails, but demographic clues suggest Medicare may be the correct primary payer.',
         fields: {
-          'Specimen type': 'Standard biopsy',
-          'Initial payer result': 'Rejected by commercial payer',
-          'Likely issue': 'Wrong primary payer order',
-          'Best next step': 'Verify Medicare and rebill',
-          'Risk': 'Assumption without proof',
-          'Pathway type': 'Inference-based reroute'
+          'Initial result': 'Rejected by commercial payer',
+          'Likely cause': 'Wrong primary payer order',
+          'Primary move': 'Verify Medicare and rebill',
+          'Time risk': 'Assumption error if inference is weak',
+          'Why it matters': 'Shows how private staff heuristics become routing logic',
+          'Confidence': 'Moderate only with supporting evidence'
         },
-        activeSteps: ['submitted', 'adjudication', 'triage', 'destination', 'followup'],
-        branch: {
-          title: 'Demographic inference, then payer correction',
-          body: 'Jan explicitly mentions age as one way staff may infer Medicare. This is a real-world heuristic but should become a documented rule, not a private instinct.',
-          bullets: ['Check age and payer coordination clues', 'Confirm primary payer when possible', 'Rebill if evidence supports Medicare', 'Escalate if evidence remains uncertain']
-        }
+        branchCards: [
+          {
+            title: 'Likely branch',
+            body: 'Use demographic evidence to test whether Medicare is primary, then rebill if supported.',
+            bullets: ['Check age and coordination clues', 'Confirm when possible', 'Avoid undocumented guessing']
+          },
+          {
+            title: 'Operational concern',
+            body: 'This is exactly the kind of tacit judgment that should become a documented rule if it is valid.',
+            bullets: ['Avoid hidden heuristics', 'Reduce inconsistency', 'Preserve expertise']
+          },
+          {
+            title: 'Research tie-in',
+            body: 'Better labs formalize payer-order logic and use structured verification instead of relying on memory.',
+            bullets: ['Eligibility tools', 'Rules engines', 'Escalation criteria']
+          }
+        ]
       },
       {
-        id: 'poor-payer-fidelity',
-        name: 'Extremely low-paying payer class',
-        summary: 'The payer reimburses so poorly that additional testing can turn the case into a financial loss. Billing logic starts affecting operational decisions.',
+        id: 'poor-payer',
+        name: 'Structurally low-paying payer case',
+        type: 'Payer economics',
+        summary: 'Reimbursement is so weak that the case may become financially unattractive if additional workup expands.',
         fields: {
-          'Specimen type': 'Low-pay payer case',
-          'Initial payer result': 'Minimal reimbursement',
-          'Likely issue': 'Economically unfavorable contract',
-          'Best next step': 'Manager / pathologist awareness',
-          'Risk': 'Clinical-business spillover',
-          'Pathway type': 'Payer economics'
+          'Initial result': 'Minimal reimbursement',
+          'Likely cause': 'Weak fee schedule / payer contract',
+          'Primary move': 'Managerial awareness and policy review',
+          'Time risk': 'Operational loss hidden inside case flow',
+          'Why it matters': 'Business logic may influence diagnostic behavior',
+          'Confidence': 'Needs real margin analysis'
         },
-        activeSteps: ['submitted', 'adjudication', 'triage', 'destination', 'followup'],
-        branch: {
-          title: 'Low-yield payer awareness path',
-          body: 'This path is not just about collections. It raises a policy question: how should the lab govern testing, reimbursement, and loss exposure for very weak payer classes?',
-          bullets: ['Flag payer as structurally low yield', 'Limit discretionary downstream work where appropriate', 'Track margin impact by payer class', 'Escalate policy decision to leadership']
-        }
+        branchCards: [
+          {
+            title: 'Likely branch',
+            body: 'Flag the payer class for policy-level awareness rather than treating the issue only as claim cleanup.',
+            bullets: ['Track margin impact', 'Review test-ordering patterns', 'Escalate to leadership']
+          },
+          {
+            title: 'Operational concern',
+            body: 'This is not just a billing problem. It may be a governance problem if reimbursement pressure shapes workup choices.',
+            bullets: ['Clinical-business spillover', 'Contract strategy', 'Case-level economics']
+          },
+          {
+            title: 'Research tie-in',
+            body: 'Pathology billing guidance repeatedly stresses payer-level performance analysis, not just claim-level cleanup.',
+            bullets: ['Contract review', 'Underpayment tracking', 'Payer segmentation']
+          }
+        ]
       },
       {
-        id: 'missing-info-resubmit',
-        name: 'Rejected for missing or insufficient information',
-        summary: 'The claim is not dead, but it needs corrected or added information before it can be reprocessed.',
+        id: 'missing-info',
+        name: 'Correctable information gap',
+        type: 'Correctable rejection',
+        summary: 'The claim is recoverable, but missing or insufficient information prevents immediate payment.',
         fields: {
-          'Specimen type': 'Routine submission',
-          'Initial payer result': 'Rejected / insufficient info',
-          'Likely issue': 'Documentation or coding gap',
-          'Best next step': 'Correct and resubmit',
-          'Risk': 'Backlog if queue is unmanaged',
-          'Pathway type': 'Correctable rejection'
+          'Initial result': 'Rejected / insufficient info',
+          'Likely cause': 'Documentation or coding gap',
+          'Primary move': 'Correct and resubmit',
+          'Time risk': 'Queue backlog and deadline slippage',
+          'Why it matters': 'Most standardizable denial path',
+          'Confidence': 'High if deficiency is clear'
         },
-        activeSteps: ['submitted', 'adjudication', 'triage', 'destination', 'followup'],
-        branch: {
-          title: 'Correct and resubmit',
-          body: 'This is the cleanest denial-recovery path. It should be the easiest to standardize with templates, checklists, and ownership rules.',
-          bullets: ['Identify missing field or coding gap', 'Correct claim quickly', 'Resubmit within payer window', 'Log denial category for pattern analysis']
-        }
+        branchCards: [
+          {
+            title: 'Likely branch',
+            body: 'Correct the claim quickly and resubmit within payer deadlines.',
+            bullets: ['Identify missing element', 'Correct systematically', 'Track denial class for analytics']
+          },
+          {
+            title: 'Operational concern',
+            body: 'This is the easiest branch to standardize, yet it still becomes costly if unmanaged.',
+            bullets: ['Needs template logic', 'Needs owner', 'Needs SLA']
+          },
+          {
+            title: 'Research tie-in',
+            body: 'Many pathology billing platforms focus first on exactly this kind of correctable rejection because it yields fast operational gains.',
+            bullets: ['Scrubbing', 'Templates', 'Resubmission discipline']
+          }
+        ]
       },
       {
-        id: 'aged-patient-balance',
-        name: 'Patient balance aged out after statements',
-        summary: 'The balance has already moved to patient billing and remained unpaid through the statement cycle.',
+        id: 'aged-balance',
+        name: 'Aged patient balance after statements',
+        type: 'Late-stage AR',
+        summary: 'The balance has already aged through patient billing and remains unpaid.',
         fields: {
-          'Specimen type': 'Any patient-responsibility balance',
-          'Initial payer result': 'Previously moved to patient',
-          'Likely issue': 'Nonpayment after statement cycle',
-          'Best next step': 'Collections handoff',
-          'Risk': 'Low additional recovery',
-          'Pathway type': 'Late-stage AR'
+          'Initial result': 'Unpaid after statements',
+          'Likely cause': 'Nonpayment after patient responsibility transfer',
+          'Primary move': 'Collections handoff',
+          'Time risk': 'Low incremental recovery',
+          'Why it matters': 'Should be reported separately from denials',
+          'Confidence': 'High once statement cycle is complete'
         },
-        activeSteps: ['submitted', 'adjudication', 'triage', 'destination', 'followup'],
-        branch: {
-          title: 'Collections pathway',
-          body: 'The transcript makes clear that collections is often a late-stage fallback, not an early move. Recovery exists, but only partially.',
-          bullets: ['Age on patient ledger', 'No response after statements', 'Send to collections', 'Track recovery separately from insurance denials']
-        }
+        branchCards: [
+          {
+            title: 'Likely branch',
+            body: 'Send the balance to collections after the statement cycle and internal follow-up threshold are complete.',
+            bullets: ['Collections as late-stage fallback', 'Track recovery separately', 'Avoid confusing with insurer denials']
+          },
+          {
+            title: 'Operational concern',
+            body: 'If low-yield collections work consumes too much staff attention, it can crowd out higher-value recovery work.',
+            bullets: ['Need queue prioritization', 'Need recovery benchmarks', 'Need write-down rules']
+          },
+          {
+            title: 'Research tie-in',
+            body: 'RCM dashboards often separate patient-responsibility AR from denial management because the behavior and recovery logic differ materially.',
+            bullets: ['Distinct metrics', 'Distinct owners', 'Distinct success assumptions']
+          }
+        ]
       }
     ];
 
@@ -619,19 +818,19 @@
     const detailTitle = document.getElementById('detailTitle');
     const detailIntro = document.getElementById('detailIntro');
     const detailGrid = document.getElementById('detailGrid');
-    const flowEl = document.getElementById('flow');
-    const branchArea = document.getElementById('branchArea');
+    const flowRail = document.getElementById('flowRail');
+    const branchGrid = document.getElementById('branchGrid');
 
     let activeId = claims[0].id;
 
-    function renderClaims() {
+    function renderClaimList() {
       claimList.innerHTML = '';
       claims.forEach(claim => {
         const btn = document.createElement('button');
         btn.className = 'claim-btn' + (claim.id === activeId ? ' active' : '');
         btn.innerHTML = `
-          <div class="claim-title">${claim.name}</div>
-          <div class="claim-sub">${claim.fields['Pathway type']}</div>
+          <div class="title">${claim.name}</div>
+          <div class="sub">${claim.type}</div>
         `;
         btn.addEventListener('click', () => {
           activeId = claim.id;
@@ -646,87 +845,57 @@
       detailIntro.textContent = claim.summary;
       detailGrid.innerHTML = '';
       Object.entries(claim.fields).forEach(([k, v]) => {
-        const div = document.createElement('div');
-        div.className = 'kv';
-        div.innerHTML = `<div class="k">${k}</div><div class="v">${v}</div>`;
-        detailGrid.appendChild(div);
+        const item = document.createElement('div');
+        item.className = 'kv';
+        item.innerHTML = `<div class="k">${k}</div><div class="v">${v}</div>`;
+        detailGrid.appendChild(item);
       });
     }
 
-    function renderFlow(claim) {
-      flowEl.innerHTML = '';
-      flowTemplate.forEach((step, i) => {
+    function renderFlow() {
+      flowRail.innerHTML = '';
+      steps.forEach((step, i) => {
         const wrap = document.createElement('div');
         wrap.className = 'node-wrap';
 
         const node = document.createElement('div');
-        const isActive = claim.activeSteps.includes(step.id);
-        node.className = `node ${step.color} ${isActive ? 'active' : 'dimmed'}`;
+        node.className = `node ${step.color} active`;
         node.innerHTML = `
           <div class="step">Step ${i + 1}</div>
           <div class="title">${step.title}</div>
           <div class="desc">${step.desc}</div>
         `;
         wrap.appendChild(node);
-        flowEl.appendChild(wrap);
+        flowRail.appendChild(wrap);
 
-        if (i < flowTemplate.length - 1) {
+        if (i < steps.length - 1) {
           const connector = document.createElement('div');
-          connector.className = 'connector' + (isActive ? ' active' : '');
-          flowEl.appendChild(connector);
+          connector.className = 'connector active';
+          flowRail.appendChild(connector);
         }
       });
     }
 
-    function renderBranch(claim) {
-      branchArea.innerHTML = '';
-      const cards = [
-        {
-          title: 'Selected pathway',
-          body: claim.branch.body,
-          bullets: claim.branch.bullets,
-          active: true
-        },
-        {
-          title: 'Operational concern',
-          body: claim.fields['Risk'],
-          bullets: [
-            'What evidence supports the next move?',
-            'What deadline applies?',
-            'Who owns the case now?'
-          ],
-          active: true
-        },
-        {
-          title: 'What this scenario tests',
-          body: 'This synthetic claim highlights one branch of the larger revenue-cycle problem described in the transcript and memo.',
-          bullets: [
-            'Can the branch be documented clearly?',
-            'Can it be routed consistently by non-expert staff?',
-            'Can it later be assisted by software?'
-          ],
-          active: true
-        }
-      ];
-
-      cards.forEach(card => {
+    function renderBranches(claim) {
+      branchGrid.innerHTML = '';
+      claim.branchCards.forEach(card => {
         const el = document.createElement('div');
-        el.className = 'branch-card' + (card.active ? ' active' : '');
+        el.className = 'branch';
         el.innerHTML = `
           <h3>${card.title}</h3>
           <p>${card.body}</p>
           <ul>${card.bullets.map(b => `<li>${b}</li>`).join('')}</ul>
         `;
-        branchArea.appendChild(el);
+        branchGrid.appendChild(el);
       });
     }
 
     function update() {
       const claim = claims.find(c => c.id === activeId);
-      renderClaims();
+      renderClaimList();
       renderDetails(claim);
-      renderFlow(claim);
-      renderBranch(claim);
+      renderFlow();
+      renderBranches(claim);
     }
 
     update();
